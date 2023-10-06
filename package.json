@@ -4,6 +4,7 @@
   "main": "index.js",
   "repository": "git@github.com:lopis/secret-santa.git",
   "author": "lopis",
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "start": "node server/index.js"
