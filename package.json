@@ -7,9 +7,15 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "dev": "cd client; yarn dev"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "react-cookie": "^6.1.1",
     "redis": "^4.6.10"
   },
   "devDependencies": {
