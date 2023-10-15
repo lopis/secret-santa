@@ -12,6 +12,9 @@
     "start": "node server/index.js",
     "dev": "cd client; yarn dev"
   },
+  "engines": {
+    "node": "lts"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
