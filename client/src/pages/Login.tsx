@@ -3,7 +3,11 @@ import { useCookies } from 'react-cookie';
 
 const LOGIN = 'http://localhost:3000/login'
 
-function Login({ onLogin }) {
+interface LoginProps {
+  onLogin: (username: string) => void
+}
+
+function Login({ onLogin }: LoginProps) {
   const [formData, setFormData] = useState({ username: '', password: '', error: '', authToken: '' });
   const [cookies, setCookie] = useCookies(['authToken']);
 

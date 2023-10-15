@@ -10,7 +10,7 @@ const LOGIN = 'http://localhost:3000/login'
 
 function App() {
   const [state, setState] = useState({ loading: true, username: '', users: [] });
-  const [cookies, setCookie, removeCookie] = useCookies(['authToken']);
+  const [cookies,, removeCookie] = useCookies(['authToken']);
   const { loading, username, users } = state
 
   if (loading) {

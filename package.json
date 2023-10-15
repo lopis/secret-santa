@@ -7,6 +7,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
+    "build": "cd client; yarn build",
     "start": "node server/index.js",
     "dev": "cd client; yarn dev"
   },

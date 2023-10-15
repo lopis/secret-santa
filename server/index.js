@@ -3,6 +3,11 @@ import cors from 'cors';
 import { createClient } from 'redis';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const SALT_ROUNDS = 10;
 const app = express();
@@ -10,6 +15,7 @@ app.use(cors({
   origin: '*',
 }));
 app.use(express.json());
+app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')))
 const port = process.env.PORT || 3000; // Use the provided PORT environment variable or default to 3000
 
 (async () => {
@@ -91,8 +97,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
   });
 
   app.get('/', async (req, res) => {
-    const users = await getUsers()
-    return res.status(200).json({ users: getUsernames(users) });
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
 
   app.listen(port, () => {
