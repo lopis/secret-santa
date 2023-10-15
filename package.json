@@ -6,6 +6,7 @@
   "author": "lopis",
   "type": "module",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "cd client; yarn build",
     "start": "node server/index.js",
@@ -21,5 +22,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0"
-  }
+  },
+  "workspaces": [
+    "client"
+  ]
 }
