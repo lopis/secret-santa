@@ -98,6 +98,7 @@ button {
   transition: border-color 0.25s;
   box-shadow: 5px 6px 0 0 var(--color-highlight-2);
   transition: all 100ms ease-in-out;
+  margin-top: 32px;
 }
 button:hover {
   filter: brightness(1.4);
@@ -110,6 +111,9 @@ button:active ,
 button.active {
   box-shadow: 0 0 0 0 var(--color-highlight-2);
   transform: translate(5px, 5px);
+}
+button.secondary {
+  background-color: var(--color-medium);
 }
 
 @media (prefers-color-scheme: light) {

@@ -5,9 +5,7 @@ import './App.css'
 import Login from './pages/Login';
 import Loading from './pages/Loading';
 import Home from './pages/Home';
-
-const LOGIN = 'http://localhost:3000/login'
-
+import { login } from './api';
 
 function App() {
   const [state, setState] = useState({ loading: true, username: '', users: [] as string[]});
@@ -17,13 +15,7 @@ function App() {
 
   if (loading) {
     if (cookies.authToken) {
-      fetch(LOGIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ authToken: cookies.authToken }),
-      }).then(async (response) => {
+      login({authToken: cookies.authToken}).then(async (response) => {
         const json = await response.json()
         if (response.ok && json.username) {
           const { users = [], username } = json

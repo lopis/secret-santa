@@ -1,4 +1,5 @@
 import User from '../components/User'
+import AdminPanel from '../components/AdminPanel'
 import './Pages.css'
 
 interface HomeProps {
@@ -8,6 +9,7 @@ interface HomeProps {
 }
 
 function Home ({username, users, onLogout}: HomeProps) {
+  const isAdmin = username === 'admin'
 
   return (
     <>
@@ -20,6 +22,7 @@ function Home ({username, users, onLogout}: HomeProps) {
         </h2>
         {users.map((user, i) => <User key={i} user={user} />)}
       </div>
+      {isAdmin && <AdminPanel />}
       <button onClick={onLogout}>
         Sair
       </button>

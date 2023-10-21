@@ -63,6 +63,16 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
 
     if (authToken) {
       const username = await redis.get(`auth:${authToken}`);
+
+      if (username === 'admin') {
+        return res.json({
+          message: `Admin access granted`,
+          authToken,
+          username,
+          users: getUserNames(users)
+        })
+      }
+
       const user = await getUser(username, users);
       if (username && user) {
           return res.status(200).json({ message: 'Valid token', username, users: getUserNames(users) });
@@ -73,6 +83,22 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
 
     if (!username || !password) {
       return res.status(400).json({ message: 'Password ou nome em falta' });
+    }
+
+    if (username === 'admin') {
+      if (password === process.env.ADMIN_PWD) {
+        const token = crypto.randomBytes(32).toString('hex');
+        redis.set(`auth:${token}`, username);
+  
+        return res.json({
+          message: `Admin access granted`,
+          authToken: token,
+          username,
+          users: getUserNames(users)
+        })
+      } else {
+        return res.status(401).json({ message: 'Password incorreta' });
+      }
     }
 
     // Check if the user exists
@@ -88,8 +114,14 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
       }
       users.push(user)
       updateUsers(users);
-
-      return res.status(201).json({ message: `User created: ${username}` });
+      const token = crypto.randomBytes(32).toString('hex');
+      redis.set(`auth:${token}`, username);
+      return res.status(201).json({
+        message: `User created: ${username}`,
+        authToken: token,
+        username,
+        users: getUserNames(users),
+      });
     }
 
     if (user.loginAttempts >= 3) {
@@ -104,8 +136,6 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     }
   
     const token = crypto.randomBytes(32).toString('hex');
-    
-    // Store the authentication token in Redis
     redis.set(`auth:${token}`, username);
     
     res.json({ authToken: token, username, users: getUserNames(users) });

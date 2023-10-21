@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "ADMIN_PWD=123 nodemon index.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "engines": {
