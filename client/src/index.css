@@ -3,6 +3,7 @@
   --color-white: #f4f0bb;
   --color-white-2: #e1b6a1;
   --color-highlight: #da2c38;
+  --color-highlight-2: #210002;
   --color-medium: #226f54;
   --color-light: #87c38f;
 
@@ -74,6 +75,7 @@ h1 {
 h2 {
 	font-weight: normal;
 	font-size: 1.3em;
+  flex-basis: 100%;
 }
 
 @media (max-width: 900px) {
@@ -94,7 +96,7 @@ button {
   background-color: var(--color-highlight);
   cursor: pointer;
   transition: border-color 0.25s;
-  box-shadow: 5px 6px 0 0 #210002;
+  box-shadow: 5px 6px 0 0 var(--color-highlight-2);
   transition: all 100ms ease-in-out;
 }
 button:hover {
@@ -106,7 +108,7 @@ button:focus-visible {
 }
 button:active ,
 button.active {
-  box-shadow: 0 0 0 0 #210002;
+  box-shadow: 0 0 0 0 var(--color-highlight-2);
   transform: translate(5px, 5px);
 }
 

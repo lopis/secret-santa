@@ -14,14 +14,14 @@ function Home ({username, users, onLogout}: HomeProps) {
       <p>
         👋 Olá {username}!
       </p>
-      <h2>
-        Participantes 
-      </h2>
-      <p className="users">
-        {users.map(user => <User user={user} />)}
-      </p>
+      <div className="users">
+        <h2>
+          Participantes 
+        </h2>
+        {users.map((user, i) => <User key={i} user={user} />)}
+      </div>
       <button onClick={onLogout}>
-        sair
+        Sair
       </button>
     </>
   )

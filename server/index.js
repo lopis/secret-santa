@@ -67,12 +67,12 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
       if (username && user) {
           return res.status(200).json({ message: 'Valid token', username, users: getUserNames(users) });
       } else {
-        return res.status(401).json({ message: 'Invalid token' });
+        return res.status(401).json({ message: 'Sessão expirou' });
       }
     }
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Missing password or username' });
+      return res.status(400).json({ message: 'Password ou nome em falta' });
     }
 
     // Check if the user exists
@@ -93,14 +93,14 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     }
 
     if (user.loginAttempts >= 3) {
-      return res.status(429).json({ message: 'Too many attempts' });
+      return res.status(429).json({ message: 'Demasiadas tentativas' });
     }
   
     if (!bcrypt.compareSync(password, user.hashedPassword)) {
       user.loginAttempts++
       updateUsers(users);
 
-      return res.status(401).json({ message: 'Wrong password', attempts: 3 - user.loginAttempts });
+      return res.status(401).json({ message: 'Password incorreta', attempts: 3 - user.loginAttempts });
     }
   
     const token = crypto.randomBytes(32).toString('hex');

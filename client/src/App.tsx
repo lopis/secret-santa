@@ -12,6 +12,7 @@ const LOGIN = 'http://localhost:3000/login'
 function App() {
   const [state, setState] = useState({ loading: true, username: '', users: [] as string[]});
   const [cookies,, removeCookie] = useCookies(['authToken']);
+  const [isTransitioning, setTransitioninig] = useState(false);
   const { loading, username, users } = state
 
   if (loading) {
@@ -38,18 +39,24 @@ function App() {
   }
 
   const onLogin = (username: string, users: string[]) => {
-    setState({ ...state, username, users })
+    setTransitioninig(true)
+    setTimeout(() => {
+      setTransitioninig(false)
+      setState({ ...state, username, users })
+    }, 100);
   }
 
   const onLogout = () => {
+    setTransitioninig(true)
     setTimeout(() => {
+      setTransitioninig(false)
       removeCookie('authToken')
       setState({
         username: '',
         users: [],
         loading: false,
       })
-    }, 500);
+    }, 100);
   }
 
   return (
@@ -57,14 +64,14 @@ function App() {
       <h1>Amigo Secreto</h1>
       { loading && <Loading /> }
       { !loading && (
-        <>
+        <div className={isTransitioning ? 'fade-out' : 'fade-in'}>
           { username && (
             <Home username={username} users={users} onLogout={onLogout}/>
           )}
           { !username && (
             <Login onLogin={onLogin} />
           )}
-        </>
+        </div>
       )}
     </>
   )

@@ -12,7 +12,6 @@ function Login({ onLogin }: LoginProps) {
     username: '',
     password: '',
     error: '',
-    authToken: cookies.authToken || '',
   });
   const [active, setActive] = useState(false)
 
@@ -52,7 +51,7 @@ function Login({ onLogin }: LoginProps) {
   return (
     <>
       <div className="card">
-        <div>{ state.error }</div>
+        <span className="error">{ state.error }</span>
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="name">Nome</label>
@@ -74,7 +73,7 @@ function Login({ onLogin }: LoginProps) {
               onChange={handleInputChange}
             />
           </div>
-          <input type="hidden" name="authToken" value={state.authToken} />
+          <input type="hidden" name="authToken" value={cookies.authToken} />
           <button type="submit" className={active ? 'active' : undefined} disabled={active}>
             Entrar
           </button>
