@@ -4,12 +4,13 @@ import { useCookies } from 'react-cookie';
 import './App.css'
 import Login from './pages/Login';
 import Loading from './pages/Loading';
+import Home from './pages/Home';
 
 const LOGIN = 'http://localhost:3000/login'
 
 
 function App() {
-  const [state, setState] = useState({ loading: true, username: '', users: [] });
+  const [state, setState] = useState({ loading: true, username: '', users: [] as string[]});
   const [cookies,, removeCookie] = useCookies(['authToken']);
   const { loading, username, users } = state
 
@@ -36,8 +37,19 @@ function App() {
     }
   }
 
-  const onLogin = (username = '') => {
-    setState({ ...state, username })
+  const onLogin = (username: string, users: string[]) => {
+    setState({ ...state, username, users })
+  }
+
+  const onLogout = () => {
+    setTimeout(() => {
+      removeCookie('authToken')
+      setState({
+        username: '',
+        users: [],
+        loading: false,
+      })
+    }, 500);
   }
 
   return (
@@ -47,14 +59,7 @@ function App() {
       { !loading && (
         <>
           { username && (
-            <>
-              <p>
-                👋 Olá {username}!
-              </p>
-              <p>
-                Participantes registados: {users.join(', ')}
-              </p>
-            </>
+            <Home username={username} users={users} onLogout={onLogout}/>
           )}
           { !username && (
             <Login onLogin={onLogin} />

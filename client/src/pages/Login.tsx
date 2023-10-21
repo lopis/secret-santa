@@ -1,52 +1,58 @@
 import { ChangeEvent, useState, FormEvent } from 'react'
 import { useCookies } from 'react-cookie';
-
-const LOGIN = 'http://localhost:3000/login'
+import { login } from '../api';
 
 interface LoginProps {
-  onLogin: (username: string) => void
+  onLogin: (username: string, users: string[]) => void
 }
 
 function Login({ onLogin }: LoginProps) {
-  const [formData, setFormData] = useState({ username: '', password: '', error: '', authToken: '' });
   const [cookies, setCookie] = useCookies(['authToken']);
+  const [state, setState] = useState({
+    username: '',
+    password: '',
+    error: '',
+    authToken: cookies.authToken || '',
+  });
+  const [active, setActive] = useState(false)
 
   const handleInputChange = (event: ChangeEvent) => {
     const { name, value } = event.target as HTMLInputElement;
-    setFormData({ ...formData, [name]: value });
+    setState({ ...state, [name]: value });
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setActive(true);
 
     try {
-      const response = await fetch(LOGIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await login(state);
 
       const json = await response.json();
   
+      setTimeout(() => {
+        setActive(false);
+      }, 250);
       if (response.ok) {
-        setCookie('authToken', json.authToken)
-        onLogin(json.username)
+        setTimeout(() => {
+          setCookie('authToken', json.authToken)
+          onLogin(json.username, json.users)
+        }, 500);
       } else {
-        setFormData({ ...formData, error: json.message });
+        setActive(false);
+        setCookie('authToken', undefined)
+        setState({ ...state, error: json.message });
       }
     } catch (error) {
-      console.error(error);
-      
-      setFormData({ ...formData, error: (error as Error).message });
+      setActive(false);
+      setState({ ...state, error: (error as Error).message });
     }
   }
 
   return (
     <>
       <div className="card">
-        <div>{ formData.error }</div>
+        <div>{ state.error }</div>
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="name">Nome</label>
@@ -54,7 +60,7 @@ function Login({ onLogin }: LoginProps) {
               type="text"
               name="username"
               placeholder="exemplo: joaquim"
-              value={formData.username}
+              value={state.username}
               onChange={handleInputChange}
             />
           </div>
@@ -64,12 +70,12 @@ function Login({ onLogin }: LoginProps) {
               type="password"
               name="password"
               placeholder="exemplo: broasdemel"
-              value={formData.password}
+              value={state.password}
               onChange={handleInputChange}
             />
           </div>
-          <input type="hidden" name="authToken" value={cookies.authToken} />
-          <button type="submit">
+          <input type="hidden" name="authToken" value={state.authToken} />
+          <button type="submit" className={active ? 'active' : undefined} disabled={active}>
             Entrar
           </button>
         </form>

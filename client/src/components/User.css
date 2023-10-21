@@ -1,0 +1,12 @@
+.user {
+	height: 70px;
+	width: 150px;
+	background: var(--color-white-2);
+	color: var(--color-dark);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 15px;
+	position: relative;
+	box-shadow: 1px 5px 5px 0 #00000075, 1px 5px 5px 0 #ffffff7a inset;
+}

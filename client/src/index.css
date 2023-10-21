@@ -1,6 +1,7 @@
 :root {
   --color-dark: #43291f;
   --color-white: #f4f0bb;
+  --color-white-2: #e1b6a1;
   --color-highlight: #da2c38;
   --color-medium: #226f54;
   --color-light: #87c38f;
@@ -67,8 +68,19 @@ h1 {
   transform-origin: 0 -90px;
   margin: 0.75em 1em;
   color: var(--color-white);
-  border-radius: 5px;
 	z-index: 0;
+}
+
+h2 {
+	font-weight: normal;
+	font-size: 1.3em;
+}
+
+@media (max-width: 900px) {
+  h1 {
+    margin: 0.5em 0 1em;
+    font-size: 2em;
+  }
 }
 
 
@@ -82,6 +94,8 @@ button {
   background-color: var(--color-highlight);
   cursor: pointer;
   transition: border-color 0.25s;
+  box-shadow: 5px 6px 0 0 #210002;
+  transition: all 100ms ease-in-out;
 }
 button:hover {
   filter: brightness(1.4);
@@ -89,6 +103,11 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:active ,
+button.active {
+  box-shadow: 0 0 0 0 #210002;
+  transform: translate(5px, 5px);
 }
 
 @media (prefers-color-scheme: light) {

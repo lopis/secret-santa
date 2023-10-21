@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import kebabCase from 'lodash/kebabCase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,12 +31,16 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     return users ? JSON.parse(users) : []
   }
 
+  const getUser = async (username, users) => {
+    return users.find(user => user.username == username)
+  }
+
   const updateUsers = async (users) => {
     await redis.set('users', JSON.stringify(users))
   }
 
-  const getUsernames = (users) => {
-    return users.map(({username}) => username)
+  const getUserNames = (users) => {
+    return users.map(({name}) => name)
   }
 
   redis.on('error', (err) => console.log('Redis Client Error', err));
@@ -47,18 +52,27 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
   // const value = await client.get('key');
 
   app.post('/login', async (req, res) => {
-    const { username, password, authToken } = req.body;
+    let { username: name, password, authToken } = req.body;
+
+    if (name) {
+      name = name.trim()
+    }
+    const username = kebabCase(name)
   
     const users = await getUsers()
 
     if (authToken) {
       const username = await redis.get(`auth:${authToken}`);
-      if (username) {
-        const users = await getUsers()
-        return res.status(200).json({ message: 'Valid token', username, users: getUsernames(users) });
+      const user = await getUser(username, users);
+      if (username && user) {
+          return res.status(200).json({ message: 'Valid token', username, users: getUserNames(users) });
       } else {
-        return res.status(404).json({ message: 'Invalid token' });
+        return res.status(401).json({ message: 'Invalid token' });
       }
+    }
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Missing password or username' });
     }
 
     // Check if the user exists
@@ -68,6 +82,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
       console.log(`New user signing up: ${username}`);
       const user = {
         username,
+        name,
         hashedPassword: bcrypt.hashSync(password, SALT_ROUNDS),
         loginAttempts: 0,
       }
@@ -93,7 +108,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     // Store the authentication token in Redis
     redis.set(`auth:${token}`, username);
     
-    res.json({ authToken: token, username, users: getUsernames(users) });
+    res.json({ authToken: token, username, users: getUserNames(users) });
   });
 
   app.get('/', async (req, res) => {
