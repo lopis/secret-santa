@@ -10,7 +10,7 @@ import { login } from './api';
 function App() {
   const [state, setState] = useState({ loading: true, username: '', users: [] as string[]});
   const [cookies,, removeCookie] = useCookies(['authToken']);
-  const [isTransitioning, setTransitioninig] = useState(false);
+  const [isTransitioning, setTransitioninig] = useState(true);
   const { loading, username, users } = state
 
   if (loading) {
@@ -20,6 +20,9 @@ function App() {
         if (response.ok && json.username) {
           const { users = [], username } = json
           setState({ ...state, username, users, loading: false })
+          setTimeout(() => {
+            setTransitioninig(false)
+          }, 200);
         } else {
           removeCookie('authToken')
           setState({ ...state, loading: false })

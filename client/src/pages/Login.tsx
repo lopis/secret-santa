@@ -1,13 +1,19 @@
 import { ChangeEvent, useState, FormEvent } from 'react'
-import { useCookies } from 'react-cookie';
-import { login } from '../api';
+import { useCookies } from 'react-cookie'
+import { CookieSetOptions } from 'universal-cookie'
+import { login } from '../api'
 
 interface LoginProps {
   onLogin: (username: string, users: string[]) => void
 }
 
+const cookieOptions: CookieSetOptions = {
+  sameSite: 'none',
+  secure: true,
+}
+
 function Login({ onLogin }: LoginProps) {
-  const [cookies, setCookie] = useCookies(['authToken']);
+  const [cookies, setCookie, removeCookie] = useCookies(['authToken']);
   const [state, setState] = useState({
     username: '',
     password: '',
@@ -25,7 +31,7 @@ function Login({ onLogin }: LoginProps) {
     setActive(true);
 
     try {
-      const response = await login(state);
+      const response = await login({ username: state.username, password: state.password });
 
       const json = await response.json();
   
@@ -34,12 +40,12 @@ function Login({ onLogin }: LoginProps) {
       }, 250);
       if (response.ok) {
         setTimeout(() => {
-          setCookie('authToken', json.authToken)
+          setCookie('authToken', json.authToken, cookieOptions)
           onLogin(json.username, json.users)
         }, 500);
       } else {
         setActive(false);
-        setCookie('authToken', undefined)
+        removeCookie('authToken')
         setState({ ...state, error: json.message });
       }
     } catch (error) {

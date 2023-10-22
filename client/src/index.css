@@ -76,6 +76,7 @@ h2 {
 	font-weight: normal;
 	font-size: 1.3em;
   flex-basis: 100%;
+  margin: 0.2em 0;
 }
 
 @media (max-width: 900px) {

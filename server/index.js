@@ -1,11 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { createClient } from 'redis';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import kebabCase from 'lodash/kebabCase.js';
+import assign from './assign.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,8 +16,10 @@ const SALT_ROUNDS = 10;
 const app = express();
 app.use(cors({
   origin: '*',
+  credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser());
 app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')))
 const port = process.env.PORT || 3000; // Use the provided PORT environment variable or default to 3000
 
@@ -82,7 +86,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     }
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Password ou nome em falta' });
+      return res.status(400).json({ message: `Password ou nome em falta` });
     }
 
     if (username === 'admin') {
@@ -140,6 +144,21 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     
     res.json({ authToken: token, username, users: getUserNames(users) });
   });
+
+  app.get('/assign', async (req, res) => {
+    let { authToken } = req.cookies;
+    if (authToken) {
+      const username = await redis.get(`auth:${authToken}`);
+      if (username === 'admin') {
+        const users = await getUsers()
+        assign(users);
+        updateUsers(users);
+        return res.status(200).send();
+      }
+    }
+
+    return res.status(401).json({ message: 'Sessão expirou'})
+  })
 
   app.get('/', async (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));

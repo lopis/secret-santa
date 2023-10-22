@@ -2,10 +2,11 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-  gap: 15px;
-  border: 1px solid var(--color-white-2);
-  border-width: 1px 0;
-  padding: 15px;
+	gap: 15px;
+	background: #ffffff15;
+	border-width: 1px 0;
+	padding: 15px;
+	box-shadow: 0 0 10px 5px #ffffff15;
 }
 
 .error:not(:empty) {
@@ -13,4 +14,27 @@
 	background: var(--color-highlight);
 	padding: 4px 16px;
 	border-radius: 5px;
+}
+
+.loader {
+	height: 200px;
+	width: 200px;
+	font-size: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: swing 0.25s ease-in-out infinite alternate;
+	transform-origin: top;
+	position: absolute;
+	top: calc(50% - 200px);
+	left: calc(50% - 100px);
+}
+
+@keyframes swing {
+	from {
+		transform: rotate(-15deg);
+	}
+	to {
+		transform: rotate(15deg);
+	}
 }
