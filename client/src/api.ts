@@ -1,6 +1,6 @@
 export const login = async (formData: object) => {
   return fetch(
-    `${import.meta.env.VITE_SERVER_URL}/login`,
+    `${import.meta.env.VITE_SERVER_URL || ''}/login`,
     {
       method: 'POST',
       credentials: 'include',
@@ -14,7 +14,7 @@ export const login = async (formData: object) => {
 
 export const assignSantas = async () => {
   return fetch(
-    `${import.meta.env.VITE_SERVER_URL}/assign`,
+    `${import.meta.env.VITE_SERVER_URL || ''}/assign`,
     {
       credentials: 'include',
     }
