@@ -2,28 +2,30 @@ import { useState } from 'react'
 import { useCookies } from 'react-cookie';
 
 import './App.css'
-import Login from './pages/Login';
+import Login, { User } from './pages/Login';
 import Loading from './pages/Loading';
 import Home from './pages/Home';
 import { login } from './api';
 
 function App() {
-  const [state, setState] = useState({ loading: true, username: '', users: [] as string[]});
+  const [state, setState] = useState({ loading: true, user: {}, users: [] as string[]});
   const [cookies,, removeCookie] = useCookies(['authToken']);
   const [isTransitioning, setTransitioninig] = useState(true);
-  const { loading, username, users } = state
+  const { loading, users } = state
+  const user: User = state.user
 
   if (loading) {
     if (cookies.authToken) {
       login({authToken: cookies.authToken}).then(async (response) => {
         const json = await response.json()
-        if (response.ok && json.username) {
-          const { users = [], username } = json
-          setState({ ...state, username, users, loading: false })
+        if (response.ok && json.user) {
+          const { users = [], user } = json
+          setState({ ...state, user, users, loading: false })
           setTimeout(() => {
             setTransitioninig(false)
           }, 200);
         } else {
+          setTransitioninig(false)
           removeCookie('authToken')
           setState({ ...state, loading: false })
         }
@@ -36,11 +38,12 @@ function App() {
     }
   }
 
-  const onLogin = (username: string, users: string[]) => {
+  const onLogin = (user: User, users: string[]) => {
     setTransitioninig(true)
+    
     setTimeout(() => {
       setTransitioninig(false)
-      setState({ ...state, username, users })
+      setState({ ...state, user, users })
     }, 100);
   }
 
@@ -50,7 +53,7 @@ function App() {
       setTransitioninig(false)
       removeCookie('authToken')
       setState({
-        username: '',
+        user: {},
         users: [],
         loading: false,
       })
@@ -63,10 +66,10 @@ function App() {
       { loading && <Loading /> }
       { !loading && (
         <div className={isTransitioning ? 'fade-out' : 'fade-in'}>
-          { username && (
-            <Home username={username} users={users} onLogout={onLogout}/>
+          { user.name && (
+            <Home user={user} users={users} onLogout={onLogout}/>
           )}
-          { !username && (
+          { !user.name && (
             <Login onLogin={onLogin} />
           )}
         </div>

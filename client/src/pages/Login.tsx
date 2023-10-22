@@ -3,8 +3,15 @@ import { useCookies } from 'react-cookie'
 import { CookieSetOptions } from 'universal-cookie'
 import { login } from '../api'
 
+export interface User {
+  username?: string
+  name?: string
+  secretFriend?: string
+  helper?: string
+}
+
 interface LoginProps {
-  onLogin: (username: string, users: string[]) => void
+  onLogin: (user: User, users: string[]) => void
 }
 
 const cookieOptions: CookieSetOptions = {
@@ -41,7 +48,7 @@ function Login({ onLogin }: LoginProps) {
       if (response.ok) {
         setTimeout(() => {
           setCookie('authToken', json.authToken, cookieOptions)
-          onLogin(json.username, json.users)
+          onLogin(json.user, json.users)
         }, 500);
       } else {
         setActive(false);

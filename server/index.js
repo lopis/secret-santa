@@ -39,6 +39,10 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     return users.find(user => user.username == username)
   }
 
+  const getUserData = ({name, secretFriend, helper}) => {
+    return { name, secretFriend, helper }
+  }
+
   const updateUsers = async (users) => {
     await redis.set('users', JSON.stringify(users))
   }
@@ -79,7 +83,11 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
 
       const user = await getUser(username, users);
       if (username && user) {
-          return res.status(200).json({ message: 'Valid token', username, users: getUserNames(users) });
+          return res.status(200).json({
+            message: 'Valid token',
+            user: getUserData(user),
+            users: getUserNames(users)
+          });
       } else {
         return res.status(401).json({ message: 'Sessão expirou' });
       }
@@ -123,7 +131,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
       return res.status(201).json({
         message: `User created: ${username}`,
         authToken: token,
-        username,
+        user: getUserData(user),
         users: getUserNames(users),
       });
     }
@@ -142,7 +150,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     const token = crypto.randomBytes(32).toString('hex');
     redis.set(`auth:${token}`, username);
     
-    res.json({ authToken: token, username, users: getUserNames(users) });
+    res.json({ authToken: token, user: getUserData(user), users: getUserNames(users) });
   });
 
   app.get('/assign', async (req, res) => {

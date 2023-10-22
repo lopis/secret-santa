@@ -6,9 +6,9 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: 2px;
+	border-radius: 3px;
 	position: relative;
-	box-shadow: 1px 5px 5px 0 #00000075, 1px 5px 5px 0 #ffffff7a inset;
+	box-shadow: -4px -10px 35px -5px #490d0385 inset, 1px 5px 15px -5px #ffffff7a inset;
 	font-family: 'Mountains of Christmas', serif;
   font-size: 1.8em;
 }

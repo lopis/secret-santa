@@ -2,8 +2,8 @@
   --color-dark: #43291f;
   --color-white: #f4f0bb;
   --color-white-2: #e1b6a1;
-  --color-highlight: #da2c38;
-  --color-highlight-2: #210002;
+  --color-highlight: #d04132;
+  --color-highlight-2: #320905;
   --color-medium: #226f54;
   --color-light: #87c38f;
 
@@ -40,6 +40,8 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  padding-bottom: 50px;
+  box-sizing: border-box;
 }
 
 @font-face {
