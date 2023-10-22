@@ -30,6 +30,9 @@ function App() {
       });
     } else {
       setState({ ...state, loading: false })
+      setTimeout(() => {
+        setTransitioninig(false)
+      }, 200);
     }
   }
 
