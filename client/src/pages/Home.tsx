@@ -12,7 +12,7 @@ interface HomeProps {
 
 function Home ({user, users, onLogout}: HomeProps) {
   const [revealed, setReleaved] = useState('')
-  const isAdmin = user.username === 'admin'
+  const isAdmin = user.name === 'admin'
 
   const reveal = (name: string) => {
     setReleaved(revealed == name ? '' : name)
