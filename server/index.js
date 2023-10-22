@@ -76,7 +76,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
         return res.json({
           message: `Admin access granted`,
           authToken,
-          username,
+          user: { name: username },
           users: getUserNames(users)
         })
       }
@@ -105,7 +105,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
         return res.json({
           message: `Admin access granted`,
           authToken: token,
-          username,
+          user: { name: username },
           users: getUserNames(users)
         })
       } else {
