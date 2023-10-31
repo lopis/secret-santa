@@ -1,13 +1,17 @@
 import { assignSantas } from "../api"
 
-function AdminPanel () {
+interface AdminPanelProps {
+  status?: string
+}
+
+function AdminPanel ({status}: AdminPanelProps) {
   const shuffle = async () => {
     await assignSantas()
   }
 
   return (
     <div>
-      <button className="secondary" onClick={shuffle}>
+      <button disabled={status === 'started'} className="secondary" onClick={shuffle}>
         Atribuir Amigos
       </button>
     </div>

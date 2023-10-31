@@ -8,6 +8,7 @@ export interface User {
   name?: string
   secretFriend?: string
   helper?: string
+  status?: string
 }
 
 interface LoginProps {

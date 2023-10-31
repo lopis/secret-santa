@@ -99,14 +99,15 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
 
     if (username === 'admin') {
       if (password === process.env.ADMIN_PWD) {
-        const token = crypto.randomBytes(32).toString('hex');
-        redis.set(`auth:${token}`, username);
+        const token = crypto.randomBytes(32).toString('hex')
+        redis.set(`auth:${token}`, username)
+        const status = await redis.get('status')
   
         return res.json({
           message: `Admin access granted`,
           authToken: token,
-          user: { name: username },
-          users: getUserNames(users)
+          user: { name: username, status },
+          users: getUserNames(users),
         })
       } else {
         return res.status(401).json({ message: 'Password incorreta' });
@@ -117,6 +118,12 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     const user = users.find((u) => u.username === username);
   
     if (!user && username && password) {
+      // NEW USER
+      const status = await redis.get('status')
+      if (status === 'started') {
+        return res.status(401).json({message: 'Utilizador não existe.'})
+      }
+
       console.log(`New user signing up: ${username}`);
       const user = {
         username,
@@ -158,6 +165,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     if (authToken) {
       const username = await redis.get(`auth:${authToken}`);
       if (username === 'admin') {
+        await redis.set('status', 'started')
         const users = await getUsers()
         assign(users);
         updateUsers(users);

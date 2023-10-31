@@ -51,7 +51,7 @@ function Home ({user, users, onLogout}: HomeProps) {
         </h2>
         {users.map((user, i) => <UserItem key={i} user={user} />)}
       </div>
-      {isAdmin && <AdminPanel />}
+      {isAdmin && <AdminPanel status={user.status} />}
       <button onClick={onLogout}>
         Sair
       </button>
