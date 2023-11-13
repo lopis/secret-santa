@@ -143,10 +143,16 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
       });
     }
 
-    if (user.loginAttempts >= 3) {
+    if (user.loginAttempts >= 5) {
       return res.status(429).json({ message: 'Demasiadas tentativas' });
     }
   
+    // User pwd has been reset
+    if(user.hashedPassword == "") {
+      user.hashedPassword = bcrypt.hashSync(password, SALT_ROUNDS);
+      updateUsers(users);
+    }
+
     if (!bcrypt.compareSync(password, user.hashedPassword)) {
       user.loginAttempts++
       updateUsers(users);
@@ -163,13 +169,31 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
   app.get('/assign', async (req, res) => {
     let { authToken } = req.cookies;
     if (authToken) {
-      const username = await redis.get(`auth:${authToken}`);
-      if (username === 'admin') {
+      const admin = await redis.get(`auth:${authToken}`);
+      if (admin === 'admin') {
         await redis.set('status', 'started')
         const users = await getUsers()
         assign(users);
         updateUsers(users);
         return res.status(200).send();
+      }
+    }
+
+    return res.status(401).json({ message: 'Sessão expirou'})
+  })
+
+  app.get('/reset', async (req, res) => {
+    let { authToken } = req.cookies;
+    if (authToken) {
+      const admin = await redis.get(`auth:${authToken}`);
+      if (admin === 'admin') {
+        const username = req.query.username
+        const users = await getUsers()
+        const user = await getUser(username, users);
+        user.hashedPassword = ''
+        user.loginAttempts = 0
+        updateUsers(users);
+        return res.status(200).send({message: 'Password reset'});
       }
     }
 

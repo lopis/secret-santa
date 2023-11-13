@@ -20,3 +20,13 @@ export const assignSantas = async () => {
     }
   );
 }
+
+export const reset = async (username: string) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_SERVER_URL || ''}/reset?username=${username}`,
+    {
+      credentials: 'include',
+    }
+  );
+  return response.json();
+}

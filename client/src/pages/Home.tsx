@@ -3,6 +3,7 @@ import AdminPanel from '../components/AdminPanel'
 import './Pages.css'
 import { User } from './Login'
 import { useState } from 'react'
+import { reset } from '../api';
 
 interface HomeProps {
   user: User
@@ -12,6 +13,7 @@ interface HomeProps {
 
 function Home ({user, users, onLogout}: HomeProps) {
   const [revealed, setReleaved] = useState('')
+  const [msg, setMsg] = useState('')
   const isAdmin = user.name === 'admin'
 
   const reveal = (name: string) => {
@@ -22,8 +24,17 @@ function Home ({user, users, onLogout}: HomeProps) {
     return ['secret', revealName == revealed ? 'open' : ''].join(' ')
   }
 
+  const onReset = async (username: string) => {
+    const { message } = await reset(username);
+    setMsg(message)
+    setTimeout(() => {
+      setMsg('')
+    }, 1500)
+  }
+
   return (
     <>
+      <span className="info">{ msg }</span>
       <p>
         👋 Olá {user.name}!
       </p>
@@ -49,7 +60,14 @@ function Home ({user, users, onLogout}: HomeProps) {
         <h2>
           Participantes
         </h2>
-        {users.map((user, i) => <UserItem key={i} user={user} />)}
+        {users.map((user, i) => (
+          <>
+            <UserItem key={i} user={user} />
+            {isAdmin && <button onClick={() => onReset(user)}>
+              Reset pasword
+            </button>}
+          </>
+        ))}
       </div>
       {isAdmin && <AdminPanel status={user.status} />}
       <button onClick={onLogout}>
