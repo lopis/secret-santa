@@ -51,6 +51,10 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     return users.map(({name}) => name)
   }
 
+  const cleanupName = (name) => {
+    return kebabCase(name.trim())
+  }
+
   redis.on('error', (err) => console.log('Redis Client Error', err));
 
   await redis.connect();
@@ -187,7 +191,7 @@ const port = process.env.PORT || 3000; // Use the provided PORT environment vari
     if (authToken) {
       const admin = await redis.get(`auth:${authToken}`);
       if (admin === 'admin') {
-        const username = req.query.username
+        const username = cleanupName(req.query.username)
         const users = await getUsers()
         const user = await getUser(username, users);
         user.hashedPassword = ''
